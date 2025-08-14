@@ -1,0 +1,31 @@
+# Environment files with secrets
+.env
+
+# qBittorrent configuration and data (contains personal data)
+config/
+
+# Downloads folder (contains user content)
+downloads/
+
+# Docker data and volumes
+docker-data/
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Backup files
+*.bak
+*.backup
