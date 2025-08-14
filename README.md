@@ -10,23 +10,55 @@ A Docker container that combines qBittorrent-nox with NordVPN for secure torrent
 - **Secure**: All traffic routed through VPN
 - **Easy Setup**: Simple Docker Compose configuration
 
-## Quick Start
+## Quick Start (Recommended)
 
-1. **Clone this repository**:
-   ```bash
-   git clone <repository-url>
-   cd qbittorrent-nordvpn
+Use the pre-built Docker image for the easiest setup:
+
+1. **Create docker-compose.yml**:
+   ```yaml
+   version: '3.8'
+   services:
+     qbittorrent-nordvpn:
+       image: ghcr.io/barbar0jav1er/qbittorrent-nordvpn-docker:latest
+       container_name: qbittorrent-nordvpn
+       cap_add:
+         - NET_ADMIN
+       devices:
+         - /dev/net/tun
+       environment:
+         - NORDVPN_TOKEN=${NORDVPN_TOKEN}
+         - NORDVPN_COUNTRY=${NORDVPN_COUNTRY:-US}
+         - NORDVPN_GROUP=${NORDVPN_GROUP:-P2P}
+         - NORDVPN_PROTOCOL=${NORDVPN_PROTOCOL:-udp}
+         - QBITTORRENT_PORT=${QBITTORRENT_PORT:-8080}
+         - QBITTORRENT_USERNAME=${QBITTORRENT_USERNAME:-admin}
+         - QBITTORRENT_PASSWORD=${QBITTORRENT_PASSWORD}
+         - TZ=${TZ:-UTC}
+       ports:
+         - "${QBITTORRENT_PORT:-8080}:8080"
+         - "6881:6881"
+         - "6881:6881/udp"
+       volumes:
+         - ./config:/config
+         - ./downloads:/downloads
+       restart: unless-stopped
    ```
 
-2. **Create environment file**:
+2. **Create .env file** with your NordVPN settings:
    ```bash
-   cp .env.example .env
+   NORDVPN_TOKEN=your_nordvpn_token_here
+   NORDVPN_COUNTRY=US
+   NORDVPN_GROUP=P2P
+   NORDVPN_PROTOCOL=udp
+   QBITTORRENT_PORT=8080
+   QBITTORRENT_USERNAME=admin
+   TZ=UTC
    ```
 
-3. **Edit `.env` file** with your NordVPN token:
-   - Get your NordVPN token from: https://my.nordaccount.com/dashboard/nordvpn/
-   - Replace `your_nordvpn_token_here` with your actual token
-   - Set your preferred country and other settings
+3. **Get your NordVPN token**:
+   - Visit: https://my.nordaccount.com/dashboard/nordvpn/
+   - Generate a new access token
+   - Replace `your_nordvpn_token_here` in your `.env` file
 
 4. **Start the container**:
    ```bash
@@ -37,6 +69,39 @@ A Docker container that combines qBittorrent-nox with NordVPN for secure torrent
    - Open http://localhost:8080 (or your configured port)
    - Default username: `admin`
    - Password: Check container logs for generated password
+
+### Available Image Tags
+
+- `latest`: Latest stable release
+- `main`: Latest development build
+- `v1.x.x`: Specific version tags
+
+### Pull the image manually:
+```bash
+docker pull ghcr.io/barbar0jav1er/qbittorrent-nordvpn-docker:latest
+```
+
+## Build from Source (Advanced)
+
+If you prefer to build the image yourself:
+
+1. **Clone this repository**:
+   ```bash
+   git clone https://github.com/barbar0jav1er/qbittorrent-nordvpn-docker.git
+   cd qbittorrent-nordvpn-docker
+   ```
+
+2. **Create environment file**:
+   ```bash
+   cp .env.example .env
+   ```
+
+3. **Edit `.env` file** with your NordVPN token and settings
+
+4. **Start the container**:
+   ```bash
+   docker-compose up -d
+   ```
 
 ## Configuration
 
